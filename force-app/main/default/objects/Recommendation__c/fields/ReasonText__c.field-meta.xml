@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ReasonText__c</fullName>
+    <label>추천 근거</label>
+    <type>LongTextArea</type>
+    <length>2000</length>
+    <visibleLines>4</visibleLines>
+    <description>Flow의 Text Template으로 생성된 추천 이유 문장</description>
+</CustomField>

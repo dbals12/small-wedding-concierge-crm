@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ParkingSlots__c</fullName>
+    <label>주차 가능 대수</label>
+    <type>Number</type>
+    <precision>4</precision>
+    <scale>0</scale>
+    <description>확인 안 되면 0으로 입력(정보없음 처리)</description>
+</CustomField>

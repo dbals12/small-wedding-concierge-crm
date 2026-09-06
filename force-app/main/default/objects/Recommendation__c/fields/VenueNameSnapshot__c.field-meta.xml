@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VenueNameSnapshot__c</fullName>
+    <label>추천 당시 식당명</label>
+    <type>Text</type>
+    <length>120</length>
+    <description>Venue가 나중에 변경/삭제되어도 추천 당시 이름을 남기기 위한 스냅샷</description>
+</CustomField>

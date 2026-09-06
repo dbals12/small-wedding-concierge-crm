@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>스몰웨딩 컨시어지 상담 신청</title>
+</head>
+<body>
+<h2>스몰웨딩 컨시어지 상담 신청</h2>
+<!--
+  Salesforce Web-to-Lead 폼.
+  - oid: 이 org(wedding-concierge)의 Organization Id
+  - 커스텀 필드는 API 이름이 아니라 필드 Id(00N...)를 name으로 사용해야 한다(Web-to-Lead 표준 방식).
+  - retURL: 실제 서비스에서는 "감사합니다" 페이지 URL로 교체할 것. 지금은 플레이스홀더.
+  - 테스트 중 여러 번 빠르게 제출하면 시간당 제출 제한에 걸릴 수 있으니 소량만 테스트할 것.
+-->
+<form action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8" method="POST">
+<input type="hidden" name="oid" value="00Dg500000Fz5GhEAJ">
+<input type="hidden" name="retURL" value="https://www.salesforce.com">
+
+<!-- 테스트 중 에러를 이메일로 받고 싶으면 아래 두 줄의 주석을 해제하고 이메일을 채울 것 -->
+<!-- <input type="hidden" name="debug" value="1"> -->
+<!-- <input type="hidden" name="debugEmail" value="your-email@example.com"> -->
+
+<!-- Company는 표준 Lead 필수 필드이지만 개인 고객 시나리오라 화면에는 숨기고 고정값 채움 -->
+<input type="hidden" name="company" value="개인 고객">
+<input type="hidden" name="lead_source" value="Web-미니웨딩폼">
+
+<!--
+  패키지 선택: 3개 라디오 버튼 = 하나의 SelectedPackage__c 필드에 서로 다른 값 전달.
+  Record Type(Basic_Package/Standard_Package/Wedding_Concierge=Premium)은 이 값을 기준으로
+  Convert 시점에 LeadConversionService(Apex)가 결정한다 — Lead 자체는 Record Type을 나누지 않는다
+  (인테이크 단계 프로세스는 패키지와 무관하게 동일하기 때문).
+-->
+<fieldset>
+  <legend>패키지를 선택해주세요</legend>
+  <label>
+    <input type="radio" name="00Ng500000Pbo2sEAB" value="베이직">
+    <strong>베이직</strong> — 장소 + 드레스 (할인 5%)
+  </label><br>
+  <label>
+    <input type="radio" name="00Ng500000Pbo2sEAB" value="스탠다드" checked>
+    <strong>스탠다드</strong> — 장소 + 드레스 + 메이크업 + 사진 (할인 10%)
+  </label><br>
+  <label>
+    <input type="radio" name="00Ng500000Pbo2sEAB" value="프리미엄">
+    <strong>프리미엄</strong> — 스탠다드 + 답례품 + 청첩장 + 신랑 정장 (할인 15%)
+  </label>
+</fieldset>
+
+<p>
+  <label for="first_name">이름(성 제외)</label><br>
+  <input id="first_name" maxlength="40" name="first_name" type="text" required>
+</p>
+<p>
+  <label for="last_name">성</label><br>
+  <input id="last_name" maxlength="80" name="last_name" type="text" required>
+</p>
+<p>
+  <label for="email">이메일 (추천 결과를 받으실 주소)</label><br>
+  <input id="email" maxlength="80" name="email" type="email" required>
+</p>
+<p>
+  <label for="phone">연락처</label><br>
+  <input id="phone" maxlength="40" name="phone" type="text">
+</p>
+
+<p>
+  <label for="00Ng500000PaIpgEAF">하객 수</label><br>
+  <input id="00Ng500000PaIpgEAF" name="00Ng500000PaIpgEAF" type="number" required>
+</p>
+<p>
+  <label for="00Ng500000PaIpdEAF">1인당 예산 (원)</label><br>
+  <input id="00Ng500000PaIpdEAF" name="00Ng500000PaIpdEAF" type="number" required>
+</p>
+<p>
+  <label for="00Ng500000PaIpiEAF">희망 지역 (예: 마포구)</label><br>
+  <input id="00Ng500000PaIpiEAF" name="00Ng500000PaIpiEAF" type="text">
+</p>
+<p>
+  <label for="00Ng500000Pd6QXEAZ">선호하는 장소 유형</label><br>
+  <select id="00Ng500000Pd6QXEAZ" name="00Ng500000Pd6QXEAZ">
+    <option value="상관없음" selected>상관없어요, 알아서 추천해주세요</option>
+    <option value="웨딩홀">웨딩홀 — 준비 시간이 부족해 편의성이 우선</option>
+    <option value="레스토랑">레스토랑 — 어르신 하객이 많고 음식이 중요</option>
+    <option value="카페">카페 — 형식보다 분위기가 중요</option>
+    <option value="야외">야외 — 사진이 최우선, 날씨 리스크 감수 가능</option>
+  </select>
+</p>
+<p>
+  <label for="00Ng500000PaIpkEAF">예상 예식일</label><br>
+  <input id="00Ng500000PaIpkEAF" name="00Ng500000PaIpkEAF" type="date">
+</p>
+
+<p>
+  <label for="00Ng500000PaIpfEAF">음식은 어느 정도로 중요하신가요?</label><br>
+  <select id="00Ng500000PaIpfEAF" name="00Ng500000PaIpfEAF">
+    <option value="1">크게 신경 쓰지 않아요</option>
+    <option value="2">무난하면 괜찮아요</option>
+    <option value="3" selected>보통은 중요해요</option>
+    <option value="4">꽤 중요하게 생각해요</option>
+    <option value="5">하객 만족의 핵심이에요 (어르신 위주)</option>
+  </select>
+</p>
+<p>
+  <label for="00Ng500000PaIphEAF">주차는 어느 정도로 중요하신가요?</label><br>
+  <select id="00Ng500000PaIphEAF" name="00Ng500000PaIphEAF">
+    <option value="1">대중교통으로 올 사람이 많아요</option>
+    <option value="2">있으면 좋지만 필수는 아니에요</option>
+    <option value="3" selected>어느 정도 필요해요</option>
+    <option value="4">차로 오는 친척이 꽤 있어요</option>
+    <option value="5">대부분 자차로 와요, 넉넉해야 해요</option>
+  </select>
+</p>
+<p>
+  <label for="00Ng500000PaIpjEAF">교통(위치)은 어느 정도로 중요하신가요?</label><br>
+  <select id="00Ng500000PaIpjEAF" name="00Ng500000PaIpjEAF">
+    <option value="1">위치는 크게 상관없어요</option>
+    <option value="2">서울 안이면 괜찮아요</option>
+    <option value="3" selected>어느 정도 접근성은 필요해요</option>
+    <option value="4">역에서 가까웠으면 해요</option>
+    <option value="5">대중교통 접근성이 최우선이에요</option>
+  </select>
+</p>
+<p>
+  <label for="00Ng500000PaIpeEAF">추가로 전달하고 싶은 내용 (선택)</label><br>
+  <textarea id="00Ng500000PaIpeEAF" name="00Ng500000PaIpeEAF" rows="4" cols="40"></textarea>
+</p>
+
+<p><input type="submit" name="submit" value="상담 신청하기"></p>
+</form>
+</body>
+</html>

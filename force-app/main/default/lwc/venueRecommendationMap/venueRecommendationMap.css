@@ -1,0 +1,276 @@
+:host {
+    --brand-color: #b3486a;
+    --brand-color-dark: #8f3a54;
+    --ink: #2b2320;
+    --muted: #7a7370;
+    --bg: #fdf9f7;
+    display: block;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Pretendard, sans-serif;
+}
+
+.venue-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+}
+
+.center-pane {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-card {
+    text-align: center;
+    background: #fff;
+    border-radius: 1rem;
+    padding: 2.5rem 3rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.message-card_success {
+    border-top: 4px solid var(--brand-color);
+}
+
+.message-emoji {
+    font-size: 2.5rem;
+    margin: 0 0 0.75rem;
+}
+
+.message-text {
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin: 0;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.eyebrow {
+    color: var(--brand-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin: 0 0 0.5rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.map-card {
+    height: 320px;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.map-hint {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin: 0.6rem 0 2rem;
+}
+
+.venue-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+    .venue-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.venue-col {
+    display: flex;
+}
+
+.venue-card {
+    position: relative;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.venue-card-media {
+    position: relative;
+    height: 140px;
+    background: #f2ece9;
+}
+
+.venue-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.venue-card-image-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #f2ece9, #e7d9d1);
+}
+
+.venue-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+}
+
+.venue-card_selected {
+    outline: 2px solid var(--brand-color);
+    outline-offset: 2px;
+}
+
+.rank-badge {
+    position: absolute;
+    bottom: -1.1rem;
+    left: 1.25rem;
+    font-size: 1.5rem;
+    background: #fff;
+    border-radius: 999px;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.venue-card-body {
+    padding: 1.6rem 1.5rem 0;
+    flex: 1;
+}
+
+.venue-rank-label {
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.25rem;
+}
+
+.venue-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 0.6rem;
+}
+
+.score-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    margin-bottom: 0.75rem;
+}
+
+.score-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--brand-color);
+}
+
+.score-unit {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.reason-list {
+    list-style: none;
+    margin: 0 0 0.9rem;
+    padding: 0;
+}
+
+.reason-list li {
+    position: relative;
+    padding-left: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--ink);
+}
+
+.reason-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--brand-color);
+    font-weight: 700;
+}
+
+.naver-map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--brand-color);
+    text-decoration: none;
+}
+
+.naver-map-link:hover {
+    text-decoration: underline;
+}
+
+.venue-card-footer {
+    padding: 0 1.5rem 1.5rem;
+    margin-top: 1.25rem;
+}
+
+.confirm-button {
+    width: 100%;
+    --slds-c-button-brand-color-background: var(--brand-color);
+    --slds-c-button-brand-color-border: var(--brand-color);
+    --slds-c-button-brand-color-background-hover: var(--brand-color-dark);
+    --slds-c-button-brand-color-border-hover: var(--brand-color-dark);
+}
+
+.action-footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eadfda;
+}
+
+.action-footer-label {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0 0 0.9rem;
+}
+
+.action-footer-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.footer-button {
+    --slds-c-button-neutral-color-border: var(--brand-color);
+    --slds-c-button-text-color: var(--brand-color);
+    --slds-c-button-neutral-color-border-hover: var(--brand-color-dark);
+    --slds-c-button-text-color-hover: var(--brand-color-dark);
+}

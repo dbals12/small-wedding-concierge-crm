@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Source_Notes__c</fullName>
+    <label>조사 메모/출처</label>
+    <type>LongTextArea</type>
+    <length>32768</length>
+    <visibleLines>4</visibleLines>
+    <description>블로그/지도/인스타 DM 등 조사 출처와 특이사항 기록</description>
+</CustomField>

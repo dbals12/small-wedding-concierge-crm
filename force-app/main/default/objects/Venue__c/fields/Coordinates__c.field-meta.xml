@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Coordinates__c</fullName>
+    <label>위치 좌표</label>
+    <type>Location</type>
+    <displayLocationInDecimal>true</displayLocationInDecimal>
+    <scale>6</scale>
+    <description>Experience Cloud 인터랙티브 지도(lightning-map)에 핀을 표시하기 위한 위경도. 신규 Venue 입력 시 위경도도 함께 조사해서 채워야 한다.</description>
+</CustomField>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Venue__c</fullName>
+    <label>추천 식당</label>
+    <type>Lookup</type>
+    <referenceTo>Venue__c</referenceTo>
+    <relationshipLabel>Recommendations</relationshipLabel>
+    <relationshipName>Recommendations</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>RecommendationType__c=장소일 때만 사용. 향후 드레스 등 다른 타입은 RelatedRecordId__c 사용</description>
+</CustomField>

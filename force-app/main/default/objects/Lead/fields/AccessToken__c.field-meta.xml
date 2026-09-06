@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AccessToken__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>Experience Cloud 추천 결과 페이지 접근용 랜덤 토큰. 레코드 Id를 URL에 직접 노출하지 않기 위해 사용(추측 불가능한 별도 값). 추천 생성 시 Apex로 발급한다.</description>
+    <externalId>true</externalId>
+    <label>웹 접근 토큰</label>
+    <length>32</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

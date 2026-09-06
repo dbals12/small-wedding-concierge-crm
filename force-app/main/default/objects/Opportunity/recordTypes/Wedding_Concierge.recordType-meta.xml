@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Wedding_Concierge</fullName>
+    <active>true</active>
+    <businessProcess>Wedding_Concierge</businessProcess>
+    <label>Premium Package</label>
+    <description>프리미엄 패키지 Opportunity. API 이름은 초기 설계 당시의 Wedding_Concierge를 그대로 유지하지만(플랫폼상 Record Type 삭제/재생성이 막혀 재활용), 실제로는 프리미엄 등급(장소→드레스→메이크업→사진→답례품→청첩장→준비완료 7단계)을 의미한다.</description>
+</RecordType>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GuestCount__c</fullName>
+    <description>예상 하객 수. Web-to-Lead로 1차 수집, 상담사가 Screen Flow에서 재확인</description>
+    <externalId>false</externalId>
+    <label>하객 수</label>
+    <precision>3</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

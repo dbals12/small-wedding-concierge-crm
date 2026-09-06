@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>61.0</apiVersion>
+    <description>Lead Convert 시 Opportunity Business Process는 기본 Stage를 지정할 수 없어(Salesforce 제약) 전역 기본값 "Prospecting"으로 생성된다. 3개 패키지 Record Type(Basic/Standard/Wedding_Concierge=Premium) 중 하나로 생성되는 Opportunity는 전부 "장소 확정"에서 시작하므로, 표준 Convert 버튼을 직접 써도(LeadConversionService를 거치지 않아도) 이 Before-Save Flow가 안전망 역할을 한다.</description>
+    <interviewLabel>Set Default Wedding Stage {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Set Default Wedding Stage</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Active</status>
+
+    <assignments>
+        <name>Set_Stage</name>
+        <label>Set Stage</label>
+        <locationX>50</locationX>
+        <locationY>150</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.StageName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>장소 확정</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Set_Stage</targetReference>
+        </connector>
+        <object>Opportunity</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+        <filterLogic>(1 OR 2 OR 3) AND 4</filterLogic>
+        <filters>
+            <field>RecordTypeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>012g5000003Vc2TAAS</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>RecordTypeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>012g5000003VkhZAAS</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>RecordTypeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>012g5000003VkhaAAC</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>StageName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Prospecting</stringValue>
+            </value>
+        </filters>
+    </start>
+</Flow>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FoodRating__c</fullName>
+    <label>음식 평점</label>
+    <type>Number</type>
+    <precision>2</precision>
+    <scale>1</scale>
+    <required>true</required>
+    <description>네이버 플레이스 등 평점(0~5)</description>
+</CustomField>

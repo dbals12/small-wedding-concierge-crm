@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BudgetDiff__c</fullName>
+    <label>예산 대비 차액</label>
+    <type>Currency</type>
+    <precision>12</precision>
+    <scale>0</scale>
+    <description>양수면 예산보다 저렴, 음수면 초과</description>
+</CustomField>

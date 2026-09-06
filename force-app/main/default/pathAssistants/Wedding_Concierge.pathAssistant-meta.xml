@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PathAssistant xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <entityName>Opportunity</entityName>
+    <masterLabel>Wedding Concierge Path</masterLabel>
+    <fieldName>StageName</fieldName>
+    <recordTypeName>Wedding_Concierge</recordTypeName>
+    <pathAssistantSteps>
+        <picklistValueName>장소 확정</picklistValueName>
+        <fieldNames>ConfirmedVenue__c</fieldNames>
+        <fieldNames>Amount</fieldNames>
+        <info>신부가 추천받은 식당 중 하나를 확정했는지 확인하고 ConfirmedVenue__c에 연결하세요.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <picklistValueName>드레스 확정</picklistValueName>
+        <info>(로드맵) 드레스 업체 추천 단계 — 향후 확장 예정.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <picklistValueName>메이크업 확정</picklistValueName>
+        <info>(로드맵) 메이크업 업체 추천 단계 — 향후 확장 예정.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <picklistValueName>사진·스냅 확정</picklistValueName>
+        <info>(로드맵) 사진/스냅 업체 추천 단계 — 향후 확장 예정.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <picklistValueName>답례품 확정</picklistValueName>
+        <info>(로드맵) 답례품 업체 추천 단계 — 향후 확장 예정.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <picklistValueName>청첩장 확정</picklistValueName>
+        <info>(로드맵) 청첩장 업체 추천 단계 — 향후 확장 예정.</info>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <picklistValueName>준비 완료</picklistValueName>
+        <info>모든 웨딩 준비가 완료되었습니다.</info>
+    </pathAssistantSteps>
+</PathAssistant>

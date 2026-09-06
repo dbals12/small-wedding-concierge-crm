@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>61.0</apiVersion>
+    <description>상담사가 Lead 조건을 확인/보완하면, 40인 이상 수용 가능한 Venue 중 이 Lead의 예산·중요도 가중치를 반영해 TOP3를 계산하고 Recommendation__c 레코드로 저장한 뒤, 신부에게 추천 이메일을 자동 발송한다.</description>
+    <interviewLabel>Wedding Concierge Recommendation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Wedding Concierge Recommendation</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <status>Active</status>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Lead</targetReference>
+        </connector>
+    </start>
+
+    <!-- ===================== VARIABLES ===================== -->
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_Counter</name>
+        <dataType>Number</dataType>
+        <scale>0</scale>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <name>var_EmailBody</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_EmailSubject</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_TempRec</name>
+        <dataType>SObject</dataType>
+        <objectType>Recommendation__c</objectType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>col_ScoredRecommendations</name>
+        <dataType>SObject</dataType>
+        <objectType>Recommendation__c</objectType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>col_FinalRecommendations</name>
+        <dataType>SObject</dataType>
+        <objectType>Recommendation__c</objectType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_AccessToken</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+
+    <!-- ===================== DYNAMIC CHOICE SETS ===================== -->
+    <dynamicChoiceSets>
+        <name>choice_VenueType</name>
+        <dataType>Picklist</dataType>
+        <displayField>PreferredVenueType__c</displayField>
+        <picklistField>PreferredVenueType__c</picklistField>
+        <picklistObject>Lead</picklistObject>
+    </dynamicChoiceSets>
+
+    <!-- ===================== FORMULAS ===================== -->
+    <formulas>
+        <name>fx_FoodElementScore</name>
+        <dataType>Number</dataType>
+        <scale>2</scale>
+        <expression>(Loop_Venues.FoodRating__c / 5) * 100</expression>
+    </formulas>
+    <formulas>
+        <name>fx_ParkingElementScore</name>
+        <dataType>Number</dataType>
+        <scale>2</scale>
+        <expression>MIN(100, MIN(100, Loop_Venues.ParkingSlots__c / 30 * 80) + IF(Loop_Venues.ParkingFee__c = 0, 20, 0))</expression>
+    </formulas>
+    <formulas>
+        <name>fx_TransitElementScore</name>
+        <dataType>Number</dataType>
+        <scale>2</scale>
+        <expression>MAX(0, 100 - Loop_Venues.StationWalkMin__c * 10)</expression>
+    </formulas>
+    <formulas>
+        <name>fx_BudgetFitScore</name>
+        <dataType>Number</dataType>
+        <scale>2</scale>
+        <expression>IF(input_Budget = 0, 0, MAX(0, 100 - ABS(Loop_Venues.PricePerPerson__c - input_Budget) / input_Budget * 100))</expression>
+    </formulas>
+    <formulas>
+        <name>fx_PersonalizedScore</name>
+        <dataType>Number</dataType>
+        <scale>2</scale>
+        <expression>(fx_FoodElementScore * input_FoodPriority.value + fx_ParkingElementScore * input_ParkingPriority.value + fx_TransitElementScore * input_TransitPriority.value + fx_BudgetFitScore * 5) / (input_FoodPriority.value + input_ParkingPriority.value + input_TransitPriority.value + 5)</expression>
+    </formulas>
+    <formulas>
+        <name>fx_ReasonText</name>
+        <dataType>String</dataType>
+        <expression>IF(Loop_Venues.PricePerPerson__c &lt;= input_Budget,
+    &quot;예산보다 &quot; &amp; TEXT(input_Budget - Loop_Venues.PricePerPerson__c) &amp; &quot;원 저렴하고, &quot;,
+    &quot;예산보다 &quot; &amp; TEXT(Loop_Venues.PricePerPerson__c - input_Budget) &amp; &quot;원 비싸지만, &quot;)
+&amp; TEXT(Loop_Venues.MaxCapacity__c) &amp; &quot;명 수용 가능하며 음식 평점 &quot; &amp; TEXT(Loop_Venues.FoodRating__c) &amp; &quot;점, 주차 &quot;
+&amp; IF(Loop_Venues.ParkingSlots__c &gt; 0, TEXT(Loop_Venues.ParkingSlots__c) &amp; &quot;대 가능&quot;, &quot;정보 미확인&quot;)
+&amp; &quot;, 지하철역 도보 &quot; &amp; TEXT(Loop_Venues.StationWalkMin__c) &amp; &quot;분 거리입니다.&quot;</expression>
+    </formulas>
+    <formulas>
+        <name>fx_Medal</name>
+        <dataType>String</dataType>
+        <expression>IF(var_Counter = 1, &quot;🥇&quot;, IF(var_Counter = 2, &quot;🥈&quot;, &quot;🥉&quot;))</expression>
+    </formulas>
+    <formulas>
+        <name>fx_AppendedEmailBody</name>
+        <dataType>String</dataType>
+        <expression>var_EmailBody &amp;
+&quot;&lt;div style='border:1px solid #e7e1d8;border-radius:10px;padding:18px 20px;margin:0 24px 14px;font-family:Arial,Helvetica,sans-serif;'&gt;&quot; &amp;
+&quot;&lt;div style='font-size:12px;color:#a9905a;font-weight:bold;letter-spacing:1px;'&gt;&quot; &amp; fx_Medal &amp; &quot; &quot; &amp; TEXT(var_Counter) &amp; &quot;순위&lt;/div&gt;&quot; &amp;
+&quot;&lt;div style='font-size:17px;font-weight:bold;color:#2b2b2b;margin:6px 0 4px;'&gt;&quot; &amp; Loop_Top3.VenueNameSnapshot__c &amp; &quot;&lt;/div&gt;&quot; &amp;
+&quot;&lt;div style='font-size:24px;font-weight:800;color:#a9905a;margin-bottom:10px;'&gt;&quot; &amp; TEXT(Loop_Top3.MatchScore__c) &amp; &quot;점&lt;/div&gt;&quot; &amp;
+&quot;&lt;div style='font-size:13px;color:#4a4a4a;line-height:1.65;'&gt;&quot; &amp; Loop_Top3.ReasonText__c &amp; &quot;&lt;/div&gt;&quot; &amp;
+&quot;&lt;/div&gt;&quot;</expression>
+    </formulas>
+    <formulas>
+        <name>fx_EmailIntro</name>
+        <dataType>String</dataType>
+        <expression>&quot;&lt;div style='font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;'&gt;&quot; &amp;
+&quot;&lt;div style='background:#2b2b2b;padding:28px 24px;text-align:center;'&gt;&quot; &amp;
+&quot;&lt;div style='color:#ffffff;font-size:20px;font-weight:bold;letter-spacing:3px;'&gt;SWC&lt;/div&gt;&quot; &amp;
+&quot;&lt;div style='color:#cfcfcf;font-size:11px;letter-spacing:2px;margin-top:4px;'&gt;SMALL WEDDING CONCIERGE&lt;/div&gt;&quot; &amp;
+&quot;&lt;/div&gt;&quot; &amp;
+&quot;&lt;div style='padding:28px 24px 8px;'&gt;&quot; &amp;
+&quot;&lt;p style='font-size:15px;color:#2b2b2b;line-height:1.6;margin:0;'&gt;&quot; &amp; Get_Lead.FirstName &amp; &quot;님, 문의해주신 조건에 맞는 추천 결과를 안내드립니다.&lt;/p&gt;&quot; &amp;
+&quot;&lt;/div&gt;&quot;</expression>
+    </formulas>
+    <formulas>
+        <name>fx_MapLink</name>
+        <dataType>String</dataType>
+        <expression>&quot;https://smallweddingconcierge-dev-ed.develop.my.site.com/wedding2?token=&quot; &amp; var_AccessToken</expression>
+    </formulas>
+    <formulas>
+        <name>fx_EmailClosing</name>
+        <dataType>String</dataType>
+        <expression>var_EmailBody &amp;
+&quot;&lt;div style='padding:12px 24px 30px;text-align:center;font-family:Arial,Helvetica,sans-serif;'&gt;&quot; &amp;
+&quot;&lt;a href='&quot; &amp; fx_MapLink &amp; &quot;' style='display:inline-block;background:#2b2b2b;color:#ffffff;text-decoration:none;padding:14px 30px;border-radius:999px;font-weight:bold;font-size:14px;'&gt;지도에서 확인하고 바로 결정하기&lt;/a&gt;&quot; &amp;
+&quot;&lt;/div&gt;&quot; &amp;
+&quot;&lt;div style='padding:18px 24px 28px;border-top:1px solid #e7e1d8;text-align:center;color:#8a8580;font-size:12px;line-height:1.6;font-family:Arial,Helvetica,sans-serif;'&gt;&quot; &amp;
+&quot;궁금하신 점은 언제든 회신 주세요.&lt;br/&gt;© SWC (Small Wedding Concierge)&quot; &amp;
+&quot;&lt;/div&gt;&quot; &amp;
+&quot;&lt;/div&gt;&quot;</expression>
+    </formulas>
+    <formulas>
+        <name>fx_EmailSubject</name>
+        <dataType>String</dataType>
+        <expression>&quot;[웨딩 컨시어지] &quot; &amp; Get_Lead.FirstName &amp; &quot;님을 위한 장소 추천 결과&quot;</expression>
+    </formulas>
+
+    <!-- ===================== ACTION CALLS ===================== -->
+    <actionCalls>
+        <name>Send_Email</name>
+        <label>Send Recommendation Email</label>
+        <locationX>50</locationX>
+        <locationY>1650</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <connector>
+            <targetReference>Screen_Results</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Screen_Results</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>Get_Lead.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <elementReference>var_EmailSubject</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>var_EmailBody</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientId</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>logEmailOnSend</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>sendRichBody</name>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>Generate_Access_Token</name>
+        <label>Generate Access Token</label>
+        <locationX>50</locationX>
+        <locationY>1480</locationY>
+        <actionName>AccessTokenService</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Finalize_Email</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>leadIds</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputParameters>
+        <outputParameters>
+            <assignToReference>var_AccessToken</assignToReference>
+            <name>output</name>
+        </outputParameters>
+    </actionCalls>
+
+    <!-- ===================== COLLECTION PROCESSORS ===================== -->
+    <collectionProcessors>
+        <name>Sort_By_Score</name>
+        <label>Sort By Score</label>
+        <locationX>50</locationX>
+        <locationY>950</locationY>
+        <collectionProcessorType>SortCollectionProcessor</collectionProcessorType>
+        <collectionReference>col_ScoredRecommendations</collectionReference>
+        <connector>
+            <targetReference>Loop_Top3</targetReference>
+        </connector>
+        <sortOptions>
+            <doesPutEmptyStringAndNullFirst>false</doesPutEmptyStringAndNullFirst>
+            <sortField>MatchScore__c</sortField>
+            <sortOrder>Desc</sortOrder>
+        </sortOptions>
+    </collectionProcessors>
+
+    <!-- ===================== ASSIGNMENTS ===================== -->
+    <assignments>
+        <name>Apply_Screen_Inputs_To_Lead</name>
+        <label>Apply Screen Inputs To Lead</label>
+        <locationX>50</locationX>
+        <locationY>350</locationY>
+        <assignmentItems>
+            <assignToReference>Get_Lead.GuestCount__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_GuestCount</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_Lead.BudgetPerPerson__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_Budget</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_Lead.PreferredDistrict__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_District</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_Lead.PreferredVenueType__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_VenueType</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_Lead.FoodPriority__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_FoodPriority.value</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_Lead.ParkingPriority__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_ParkingPriority.value</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_Lead.TransitPriority__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_TransitPriority.value</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_Lead.ConsultationNotes__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_Notes</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_EmailBody</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>fx_EmailIntro</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Lead</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_TempRec</name>
+        <label>Assign Temp Recommendation</label>
+        <locationX>150</locationX>
+        <locationY>850</locationY>
+        <assignmentItems>
+            <assignToReference>var_TempRec.Lead__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_TempRec.Venue__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Venues.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_TempRec.VenueNameSnapshot__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Venues.Name</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_TempRec.MatchScore__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>fx_PersonalizedScore</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_TempRec.BudgetDiff__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_Budget</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_TempRec.BudgetDiff__c</assignToReference>
+            <operator>Subtract</operator>
+            <value>
+                <elementReference>Loop_Venues.PricePerPerson__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_TempRec.ReasonText__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>fx_ReasonText</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_TempRec.ProsSummary__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_VenueType.Pros__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_TempRec.ConsSummary__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_VenueType.Cons__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_TempRec.RecommendationType__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>장소</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>col_ScoredRecommendations</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>var_TempRec</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Venues</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Finalize_Email</name>
+        <label>Finalize Email</label>
+        <locationX>50</locationX>
+        <locationY>1550</locationY>
+        <assignmentItems>
+            <assignToReference>var_EmailBody</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>fx_EmailClosing</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_EmailSubject</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>fx_EmailSubject</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Send_Email</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Increment_Counter</name>
+        <label>Increment Counter</label>
+        <locationX>150</locationX>
+        <locationY>1150</locationY>
+        <assignmentItems>
+            <assignToReference>var_Counter</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Decision_IsTop3</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Set_Rank_And_Build_Email</name>
+        <label>Set Rank And Build Email</label>
+        <locationX>50</locationX>
+        <locationY>1350</locationY>
+        <assignmentItems>
+            <assignToReference>Loop_Top3.Rank__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>var_Counter</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>var_EmailBody</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>fx_AppendedEmailBody</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>col_FinalRecommendations</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_Top3</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Top3</targetReference>
+        </connector>
+    </assignments>
+
+    <!-- ===================== DECISIONS ===================== -->
+    <decisions>
+        <name>Decision_VenueTypeMatch</name>
+        <label>Venue Type Match?</label>
+        <locationX>150</locationX>
+        <locationY>800</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Venues</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No Match - Skip</defaultConnectorLabel>
+        <rules>
+            <name>Type_Matches</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>input_VenueType</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>상관없음</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_VenueType.Name</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>input_VenueType</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_TempRec</targetReference>
+            </connector>
+            <label>Match</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Decision_IsTop3</name>
+        <label>Is Top 3?</label>
+        <locationX>150</locationX>
+        <locationY>1250</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Top3</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not Top 3</defaultConnectorLabel>
+        <rules>
+            <name>Is_Top3</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>var_Counter</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>3.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Rank_And_Build_Email</targetReference>
+            </connector>
+            <label>Top 3</label>
+        </rules>
+    </decisions>
+
+    <!-- ===================== LOOPS ===================== -->
+    <loops>
+        <name>Loop_Venues</name>
+        <label>Loop Venues</label>
+        <locationX>50</locationX>
+        <locationY>650</locationY>
+        <collectionReference>Get_Venues</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Get_VenueType</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Sort_By_Score</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <name>Loop_Top3</name>
+        <label>Loop Top 3</label>
+        <locationX>50</locationX>
+        <locationY>1050</locationY>
+        <collectionReference>col_ScoredRecommendations</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Increment_Counter</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Create_Recommendations</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+
+    <!-- ===================== RECORD CREATES ===================== -->
+    <recordCreates>
+        <name>Create_Recommendations</name>
+        <label>Create Recommendations</label>
+        <locationX>50</locationX>
+        <locationY>1450</locationY>
+        <connector>
+            <targetReference>Generate_Access_Token</targetReference>
+        </connector>
+        <inputReference>col_FinalRecommendations</inputReference>
+    </recordCreates>
+
+    <!-- ===================== RECORD DELETES ===================== -->
+    <recordDeletes>
+        <name>Delete_Old_Recommendations</name>
+        <label>Delete Old Recommendations</label>
+        <locationX>50</locationX>
+        <locationY>500</locationY>
+        <connector>
+            <targetReference>Get_Venues</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Get_Venues</targetReference>
+        </faultConnector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Lead__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <object>Recommendation__c</object>
+    </recordDeletes>
+
+    <!-- ===================== RECORD LOOKUPS ===================== -->
+    <recordLookups>
+        <name>Get_Lead</name>
+        <label>Get Lead</label>
+        <locationX>50</locationX>
+        <locationY>150</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Screen_Conditions</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Lead</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_VenueType</name>
+        <label>Get Venue Type</label>
+        <locationX>150</locationX>
+        <locationY>750</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Decision_VenueTypeMatch</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Loop_Venues.VenueType__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>VenueType__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Venues</name>
+        <label>Get Eligible Venues</label>
+        <locationX>50</locationX>
+        <locationY>550</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Venues</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>IsEligible__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Venue__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+
+    <!-- ===================== RECORD UPDATES ===================== -->
+    <recordUpdates>
+        <name>Update_Lead</name>
+        <label>Update Lead</label>
+        <locationX>50</locationX>
+        <locationY>450</locationY>
+        <connector>
+            <targetReference>Delete_Old_Recommendations</targetReference>
+        </connector>
+        <inputReference>Get_Lead</inputReference>
+    </recordUpdates>
+
+    <!-- ===================== SCREENS ===================== -->
+    <screens>
+        <name>Screen_Conditions</name>
+        <label>상담 조건 확인</label>
+        <locationX>50</locationX>
+        <locationY>250</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Apply_Screen_Inputs_To_Lead</targetReference>
+        </connector>
+        <fields>
+            <name>display_LeadInfo</name>
+            <fieldText>&lt;p&gt;상담 중: {!Get_Lead.FirstName} {!Get_Lead.LastName} ({!Get_Lead.Email})&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>input_GuestCount</name>
+            <dataType>Number</dataType>
+            <defaultValue>
+                <elementReference>Get_Lead.GuestCount__c</elementReference>
+            </defaultValue>
+            <fieldText>하객 수</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+            <scale>0</scale>
+        </fields>
+        <fields>
+            <name>input_Budget</name>
+            <dataType>Currency</dataType>
+            <defaultValue>
+                <elementReference>Get_Lead.BudgetPerPerson__c</elementReference>
+            </defaultValue>
+            <fieldText>1인당 예산</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+            <scale>0</scale>
+        </fields>
+        <fields>
+            <name>input_District</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <elementReference>Get_Lead.PreferredDistrict__c</elementReference>
+            </defaultValue>
+            <fieldText>희망 지역</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>input_VenueType</name>
+            <choiceReferences>choice_VenueType</choiceReferences>
+            <dataType>String</dataType>
+            <defaultValue>
+                <elementReference>Get_Lead.PreferredVenueType__c</elementReference>
+            </defaultValue>
+            <fieldText>선호 장소 유형</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>input_FoodPriority</name>
+            <extensionName>flowruntime:slider</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>음식 중요도 (1~5)</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>value</name>
+                <value>
+                    <elementReference>Get_Lead.FoodPriority__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>min</name>
+                <value>
+                    <numberValue>1.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>max</name>
+                <value>
+                    <numberValue>5.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>step</name>
+                <value>
+                    <numberValue>1.0</numberValue>
+                </value>
+            </inputParameters>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+        </fields>
+        <fields>
+            <name>input_ParkingPriority</name>
+            <extensionName>flowruntime:slider</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>주차 중요도 (1~5)</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>value</name>
+                <value>
+                    <elementReference>Get_Lead.ParkingPriority__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>min</name>
+                <value>
+                    <numberValue>1.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>max</name>
+                <value>
+                    <numberValue>5.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>step</name>
+                <value>
+                    <numberValue>1.0</numberValue>
+                </value>
+            </inputParameters>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+        </fields>
+        <fields>
+            <name>input_TransitPriority</name>
+            <extensionName>flowruntime:slider</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>교통 중요도 (1~5)</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>value</name>
+                <value>
+                    <elementReference>Get_Lead.TransitPriority__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>min</name>
+                <value>
+                    <numberValue>1.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>max</name>
+                <value>
+                    <numberValue>5.0</numberValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>step</name>
+                <value>
+                    <numberValue>1.0</numberValue>
+                </value>
+            </inputParameters>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+        </fields>
+        <fields>
+            <name>input_Notes</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <elementReference>Get_Lead.ConsultationNotes__c</elementReference>
+            </defaultValue>
+            <fieldText>상담 메모</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+    </screens>
+    <screens>
+        <name>Screen_Results</name>
+        <label>추천 완료</label>
+        <locationX>50</locationX>
+        <locationY>1750</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>display_Result</name>
+            <fieldText>&lt;p&gt;✅ 추천 완료. {!Get_Lead.FirstName}님({!Get_Lead.Email})에게 TOP 3 추천 결과 이메일을 발송했습니다.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+    </screens>
+</Flow>

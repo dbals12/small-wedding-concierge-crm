@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MatchScore__c</fullName>
+    <label>개인화 점수</label>
+    <type>Number</type>
+    <precision>6</precision>
+    <scale>1</scale>
+    <description>이 Lead의 조건(예산/중요도)을 반영해 Flow 실행 시점에 재계산된 점수(PersonalizedScore)</description>
+</CustomField>

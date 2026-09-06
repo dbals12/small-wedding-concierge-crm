@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ranked_Candidates</fullName>
+    <label>랭킹 후보 (40인 충족)</label>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>IsEligible__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
+    <columns>NAME</columns>
+    <columns>VenueType__c</columns>
+    <columns>District__c</columns>
+    <columns>MaxCapacity__c</columns>
+    <columns>FoodRating__c</columns>
+    <columns>ParkingSlots__c</columns>
+    <columns>PricePerPerson__c</columns>
+    <columns>StationWalkMin__c</columns>
+    <columns>MatchScore__c</columns>
+</ListView>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DepositAmountText__c</fullName>
+    <label>계약금 안내 텍스트</label>
+    <type>Text</type>
+    <formula>CASE(SelectedPackage__c,
+    &quot;베이직&quot;, &quot;₩300,000&quot;,
+    &quot;스탠다드&quot;, &quot;₩500,000&quot;,
+    &quot;프리미엄&quot;, &quot;₩800,000&quot;,
+    &quot;담당 상담사가 안내드릴 예정&quot;)</formula>
+    <description>결제 안내 이메일 템플릿에서 머지필드로 쓰기 위한 패키지별 계약금 표시용 수식 필드.</description>
+</CustomField>

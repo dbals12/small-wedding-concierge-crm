@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PaymentConfirmed__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>상담사가 계좌 입금을 확인한 후 직접 체크. &quot;장소 확정 + 이 체크&quot;가 동시에 충족되어야 Convert를 진행한다(PG 연동 없이 수동 확인 방식).</description>
+    <label>계약금 입금 확인</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RelatedRecordId__c</fullName>
+    <label>연관 레코드 ID</label>
+    <type>Text</type>
+    <length>18</length>
+    <description>범용화 대비 필드. 장소 추천은 Venue__c 필드를 쓰고, 향후 드레스업체 등 다른 오브젝트가 생기면 이 필드에 해당 레코드 Id를 저장</description>
+</CustomField>

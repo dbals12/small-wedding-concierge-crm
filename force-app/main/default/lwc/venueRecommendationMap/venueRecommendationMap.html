@@ -1,0 +1,112 @@
+<template>
+    <div class="venue-page">
+
+        <template if:true={isLoadingView}>
+            <div class="center-pane">
+                <lightning-spinner alternative-text="불러오는 중" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={isErrorView}>
+            <div class="center-pane">
+                <div class="message-card">
+                    <p class="message-emoji">😕</p>
+                    <p class="message-text">{errorMessage}</p>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={isDoneView}>
+            <div class="center-pane">
+                <div class="message-card message-card_success">
+                    <p class="message-emoji">✅</p>
+                    <p class="message-text">{feedbackMessage}</p>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={isResultsView}>
+            <header class="page-header">
+                <p class="eyebrow">SMALL WEDDING CONCIERGE</p>
+                <h1 class="page-title">신부님을 위한 맞춤 추천 장소</h1>
+                <p class="page-subtitle">입력하신 조건을 바탕으로 가장 잘 맞는 예식장 TOP 3를 골라드렸어요.</p>
+            </header>
+
+            <template if:true={hasMarkers}>
+                <div class="map-card">
+                    <lightning-map
+                        map-markers={mapMarkers}
+                        markers-title="추천 장소"
+                        list-view="hidden"
+                        zoom-level="12"
+                        onmarkerselect={handleMarkerSelect}
+                    ></lightning-map>
+                </div>
+                <p class="map-hint">지도의 핀을 클릭하면 아래에서 해당 장소가 강조돼요.</p>
+            </template>
+
+            <div class="venue-grid">
+                <template for:each={recommendations} for:item="rec">
+                    <div key={rec.recommendationId} class="venue-col">
+                        <div class={rec.cardClass}>
+                            <div class="venue-card-media">
+                                <template if:true={rec.hasImage}>
+                                    <img src={rec.imageUrl} alt={rec.venueName} class="venue-card-image" />
+                                </template>
+                                <template if:false={rec.hasImage}>
+                                    <div class="venue-card-image-fallback">🏛️</div>
+                                </template>
+                                <div class="rank-badge">{rec.medal}</div>
+                            </div>
+                            <div class="venue-card-body">
+                                <p class="venue-rank-label">{rec.rankNumber}순위</p>
+                                <h2 class="venue-name">{rec.venueName}</h2>
+                                <div class="score-row">
+                                    <span class="score-value">{rec.score}</span>
+                                    <span class="score-unit">점 매칭</span>
+                                </div>
+                                <ul class="reason-list">
+                                    <template for:each={rec.reasonBullets} for:item="bullet">
+                                        <li key={bullet.id}>{bullet.text}</li>
+                                    </template>
+                                </ul>
+                                <a href={rec.naverMapUrl} target="_blank" rel="noopener noreferrer" class="naver-map-link">
+                                    🗺️ 네이버 지도에서 보기
+                                </a>
+                            </div>
+                            <div class="venue-card-footer">
+                                <lightning-button
+                                    variant="brand"
+                                    label="이 장소로 확정할게요"
+                                    data-id={rec.recommendationId}
+                                    onclick={handleConfirm}
+                                    class="confirm-button"
+                                ></lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div class="action-footer">
+                <p class="action-footer-label">아직 결정을 못 하셨나요?</p>
+                <div class="action-footer-buttons">
+                    <lightning-button
+                        label="방문해보고 결정할게요"
+                        icon-name="utility:preview"
+                        variant="neutral"
+                        onclick={handleVisit}
+                        class="footer-button"
+                    ></lightning-button>
+                    <lightning-button
+                        label="다른 조건으로 다시 추천받고 싶어요"
+                        icon-name="utility:refresh"
+                        variant="neutral"
+                        onclick={handleRetry}
+                        class="footer-button"
+                    ></lightning-button>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

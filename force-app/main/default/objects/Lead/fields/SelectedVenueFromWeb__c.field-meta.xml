@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SelectedVenueFromWeb__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>신부가 추천 결과 페이지에서 &quot;이 장소로 확정할게요&quot; 버튼을 눌러 선택한 Venue. Convert 시 Opportunity.ConfirmedVenue__c로 이관된다.</description>
+    <label>웹에서 확정한 장소</label>
+    <referenceTo>Venue__c</referenceTo>
+    <relationshipLabel>Leads (Web Selection)</relationshipLabel>
+    <relationshipName>Leads_WebSelection</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Lookup</type>
+</CustomField>

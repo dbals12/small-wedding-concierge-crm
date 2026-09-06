@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SelectedPackage__c</fullName>
+    <description>홈페이지 패키지 소개 페이지에서 신부가 선택한 패키지 등급. Web-to-Lead hidden field로 전달되며, Convert 시 Opportunity Record Type을 자동 결정하는 기준이 된다.</description>
+    <label>선택 패키지</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>베이직</fullName>
+                <default>false</default>
+                <label>베이직</label>
+            </value>
+            <value>
+                <fullName>스탠다드</fullName>
+                <default>true</default>
+                <label>스탠다드</label>
+            </value>
+            <value>
+                <fullName>프리미엄</fullName>
+                <default>false</default>
+                <label>프리미엄</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

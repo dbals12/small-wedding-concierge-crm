@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PreferredVenueType__c</fullName>
+    <description>웹폼/상담 화면에서 고객이 선택한 선호 장소 유형(VenueType__c.Name과 매칭). 추천 Flow가 이 값으로 후보 장소를 필터링한다. &quot;상관없음&quot;이면 필터링 없이 전체 후보를 스코어링한다.</description>
+    <label>선호 장소 유형</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>상관없음</fullName>
+                <default>true</default>
+                <label>상관없음</label>
+            </value>
+            <value>
+                <fullName>웨딩홀</fullName>
+                <default>false</default>
+                <label>웨딩홀</label>
+            </value>
+            <value>
+                <fullName>레스토랑</fullName>
+                <default>false</default>
+                <label>레스토랑</label>
+            </value>
+            <value>
+                <fullName>카페</fullName>
+                <default>false</default>
+                <label>카페</label>
+            </value>
+            <value>
+                <fullName>야외</fullName>
+                <default>false</default>
+                <label>야외</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

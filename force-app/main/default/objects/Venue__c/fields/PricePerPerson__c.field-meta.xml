@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PricePerPerson__c</fullName>
+    <label>1인당 예상 비용</label>
+    <type>Currency</type>
+    <precision>10</precision>
+    <scale>0</scale>
+    <required>true</required>
+    <description>대관료+식대 합산 근사치(원)</description>
+</CustomField>

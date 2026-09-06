@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Wedding Package</label>
+    <pluralLabel>Wedding Packages</pluralLabel>
+    <nameField>
+        <label>Package Name</label>
+        <type>Text</type>
+    </nameField>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <sharingModel>ReadWrite</sharingModel>
+    <enableActivities>false</enableActivities>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <description>패키지 등급(베이직/스탠다드/프리미엄)의 정의. 실제 판매되는 것은 Opportunity의 OpportunityLineItem 조합이고, 이 오브젝트는 "어떤 카테고리를 묶을지"와 "할인율"에 대한 템플릿 역할만 한다.</description>
+</CustomObject>

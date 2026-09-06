@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>VenueType__c</fullName>
+    <label>장소 유형</label>
+    <type>Lookup</type>
+    <referenceTo>VenueType__c</referenceTo>
+    <relationshipLabel>Venues</relationshipLabel>
+    <relationshipName>Venues</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>레스토랑/웨딩홀/카페/야외 중 주된 성격 하나</description>
+</CustomField>

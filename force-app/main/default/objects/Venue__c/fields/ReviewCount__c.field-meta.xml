@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ReviewCount__c</fullName>
+    <label>리뷰 수</label>
+    <type>Number</type>
+    <precision>6</precision>
+    <scale>0</scale>
+    <description>네이버 플레이스 리뷰 개수</description>
+</CustomField>

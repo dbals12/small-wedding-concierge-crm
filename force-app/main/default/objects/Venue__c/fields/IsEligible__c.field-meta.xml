@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IsEligible__c</fullName>
+    <label>기본 자격 충족</label>
+    <type>Checkbox</type>
+    <formula>MaxCapacity__c &gt;= 40</formula>
+    <description>40인 이상 수용 가능 여부. 추천 로직 Flow의 Get Records 조건으로 사용되는 게이트</description>
+</CustomField>

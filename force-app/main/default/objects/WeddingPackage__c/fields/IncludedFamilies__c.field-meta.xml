@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IncludedFamilies__c</fullName>
+    <label>포함 카테고리</label>
+    <type>MultiselectPicklist</type>
+    <visibleLines>4</visibleLines>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Venue</fullName>
+                <default>false</default>
+            </value>
+            <value>
+                <fullName>Dress</fullName>
+                <default>false</default>
+            </value>
+            <value>
+                <fullName>Makeup</fullName>
+                <default>false</default>
+            </value>
+            <value>
+                <fullName>Photo</fullName>
+                <default>false</default>
+            </value>
+            <value>
+                <fullName>Gift</fullName>
+                <default>false</default>
+            </value>
+            <value>
+                <fullName>Invitation</fullName>
+                <default>false</default>
+            </value>
+            <value>
+                <fullName>Suit</fullName>
+                <default>false</default>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <description>이 패키지에 포함된 Product2 Family 목록</description>
+</CustomField>

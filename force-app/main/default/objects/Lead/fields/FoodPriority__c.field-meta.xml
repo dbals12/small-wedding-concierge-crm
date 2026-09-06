@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FoodPriority__c</fullName>
+    <description>1~5. Web-to-Lead HTML의 select 옵션 텍스트(예: &quot;하객 만족의 핵심이에요&quot;)는 자연어이고 실제 저장값은 숫자 — Flow 가중치 계산(/5)에 그대로 사용</description>
+    <externalId>false</externalId>
+    <label>음식 중요도</label>
+    <precision>1</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

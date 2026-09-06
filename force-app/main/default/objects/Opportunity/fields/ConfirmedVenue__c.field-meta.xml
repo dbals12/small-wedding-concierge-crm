@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ConfirmedVenue__c</fullName>
+    <label>확정 식당</label>
+    <type>Lookup</type>
+    <referenceTo>Venue__c</referenceTo>
+    <relationshipLabel>Opportunities</relationshipLabel>
+    <relationshipName>Opportunities</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Lead Convert 후 신부가 최종 선택한 식당. "장소 확정" Stage의 Key Field.</description>
+</CustomField>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>상담 신청 완료 | SWC</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root {
+    --ink: #2b2b2b;
+    --muted: #8a8580;
+    --ivory: #faf6f0;
+    --badge: #a9905a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
+    background: var(--ivory);
+    color: var(--ink);
+    word-break: keep-all;
+  }
+  .card {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    padding: 3rem 2.5rem;
+    max-width: 480px;
+    text-align: center;
+  }
+  .badge {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1.5rem;
+    border-radius: 0.7rem;
+    background: var(--ink);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+  }
+  h1 { font-size: 1.4rem; margin: 0 0 0.75rem; }
+  p { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin: 0 0 2rem; }
+  a.home-link {
+    display: inline-block;
+    background: var(--ink);
+    color: #fff;
+    text-decoration: none;
+    padding: 0.8rem 1.8rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  a.home-link:hover { background: #000; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">SWC</div>
+    <h1>상담 신청이 접수되었습니다</h1>
+    <p>담당 상담사가 확인 후 빠르게 연락드릴게요.<br>신청하신 이메일로도 확인 메일이 발송될 예정입니다.</p>
+    <a class="home-link" href="index.html">홈으로 돌아가기</a>
+  </div>
+</body>
+</html>

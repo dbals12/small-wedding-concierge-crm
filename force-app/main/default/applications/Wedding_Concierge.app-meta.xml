@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Wedding Concierge</label>
+    <description>스몰웨딩 컨시어지 상담사용 전용 앱. 상담 접수(Lead)부터 추천(Recommendation), 식당 관리(Venue/Venue Type), 예약 확정(Opportunity)까지 한 곳에서 처리한다.</description>
+    <formFactors>Large</formFactors>
+    <formFactors>Small</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <navType>Standard</navType>
+    <tabs>standard-home</tabs>
+    <tabs>standard-Lead</tabs>
+    <tabs>Create_Consultation_Lead</tabs>
+    <tabs>Venue__c</tabs>
+    <tabs>VenueType__c</tabs>
+    <tabs>Recommendation__c</tabs>
+    <tabs>standard-Opportunity</tabs>
+    <tabs>standard-Contact</tabs>
+    <tabs>standard-Account</tabs>
+    <uiType>Lightning</uiType>
+</CustomApplication>

@@ -6,6 +6,10 @@
 
 `Record Type / Business Process 분리` · `2단계 점수 모델` · `Screen Flow (TOP-N + 이메일 조립)` · `Guest User 토큰 인증 Apex` · `Web-to-Lead 수동 구성` · `LWC 지도`
 
+| 공개 추천 사이트 — 지도 + 개인화 점수 TOP 3 | 상담사용 Salesforce 앱 — Venue 데이터 모델 |
+|---|---|
+| ![추천 사이트](./screenshots/01_추천사이트_지도_TOP3.png) | ![Salesforce 앱](./screenshots/03_Salesforce_WeddingConcierge_앱.png) |
+
 ---
 
 ## 1. 문제 재정의

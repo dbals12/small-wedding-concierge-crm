@@ -103,6 +103,7 @@ export default class VenueRecommendationMap extends LightningElement {
         return {
             ...r,
             venueName: cleanName,
+            isDemoData: r.isDemoData,
             medal: r.rankNumber === 1 ? '🥇' : r.rankNumber === 2 ? '🥈' : '🥉',
             hasLocation,
             reasonBullets: this.toBullets(r.reasonText),

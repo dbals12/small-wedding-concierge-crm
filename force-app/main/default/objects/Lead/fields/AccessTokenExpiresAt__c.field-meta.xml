@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AccessTokenExpiresAt__c</fullName>
+    <description>고객용 추천 링크의 만료 시각. 토큰 발급 시점을 기준으로 7일 뒤로 설정한다.</description>
+    <label>웹 접근 토큰 만료 시각</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>DateTime</type>
+</CustomField>

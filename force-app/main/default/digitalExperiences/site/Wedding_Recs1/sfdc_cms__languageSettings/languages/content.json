@@ -1,0 +1,14 @@
+{
+  "type" : "sfdc_cms__languageSettings",
+  "title" : "LanguageContent",
+  "contentBody" : {
+    "languages" : [ {
+      "locale" : "ko",
+      "label" : "Korean",
+      "isActive" : true,
+      "isAuthoringOnly" : false
+    } ],
+    "defaultLocale" : "ko"
+  },
+  "urlName" : "languagecontent"
+}

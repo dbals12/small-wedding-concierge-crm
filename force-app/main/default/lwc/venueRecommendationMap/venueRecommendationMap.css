@@ -126,6 +126,28 @@
     display: block;
 }
 
+.reference-image-label {
+    position: absolute;
+    right: 0.6rem;
+    bottom: 0.55rem;
+    padding: 0.2rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(20, 20, 20, 0.72);
+    color: #fff;
+    font-size: 0.65rem;
+}
+
+.demo-data-label {
+    display: inline-block;
+    margin-bottom: 0.45rem;
+    padding: 0.2rem 0.45rem;
+    border-radius: 999px;
+    background: #f7efe9;
+    color: #795548;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
 .venue-card-image-fallback {
     width: 100%;
     height: 100%;

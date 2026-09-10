@@ -190,6 +190,11 @@
         <editable>true</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>Lead.AccessTokenExpiresAt__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>Lead.SelectedVenueFromWeb__c</field>
         <readable>true</readable>
         <editable>true</editable>

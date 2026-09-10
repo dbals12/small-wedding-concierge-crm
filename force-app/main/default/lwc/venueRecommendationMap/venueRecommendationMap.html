@@ -51,7 +51,8 @@
                         <div class={rec.cardClass}>
                             <div class="venue-card-media">
                                 <template if:true={rec.hasImage}>
-                                    <img src={rec.imageUrl} alt={rec.venueName} class="venue-card-image" />
+                                    <img src={rec.imageUrl} alt="장소 유형 참고 이미지" class="venue-card-image" />
+                                    <span class="reference-image-label">장소 유형 참고 이미지</span>
                                 </template>
                                 <template if:false={rec.hasImage}>
                                     <div class="venue-card-image-fallback">🏛️</div>
@@ -60,6 +61,9 @@
                             </div>
                             <div class="venue-card-body">
                                 <p class="venue-rank-label">{rec.rankNumber}순위</p>
+                                <template if:true={rec.isDemoData}>
+                                    <span class="demo-data-label">추천 로직 검증용 데이터</span>
+                                </template>
                                 <h2 class="venue-name">{rec.venueName}</h2>
                                 <div class="score-row">
                                     <span class="score-value">{rec.score}</span>

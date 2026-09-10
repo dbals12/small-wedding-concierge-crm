@@ -1,0 +1,76 @@
+{
+  "type" : "sfdc_cms__themeLayout",
+  "title" : "Scoped Header and Footer",
+  "contentBody" : {
+    "component" : {
+      "attributes" : {
+        "hideThemeFooter" : false,
+        "showThemeFooterAtBottom" : true,
+        "stickyThemeHeader" : false
+      },
+      "children" : [ {
+        "children" : [ {
+          "attributes" : {
+            "backgroundImageConfig" : "",
+            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "componentSpacerSize" : "",
+            "layoutDirectionDesktop" : "row",
+            "layoutDirectionMobile" : "column",
+            "layoutDirectionTablet" : "column",
+            "maxContentWidth" : "",
+            "sectionColumnGutterWidth" : "",
+            "sectionConfig" : "{\"UUID\":\"2c777fec-de13-4a3e-81d5-69cb1658f78b\",\"columns\":[{\"UUID\":\"23133df7-e672-4772-b714-86dc9ec24383\",\"columnName\":\"Column 1\",\"columnKey\":\"headerSection\",\"columnWidth\":\"12\",\"seedComponents\":null}]}",
+            "sectionMinHeight" : "",
+            "sectionVerticalAlign" : "flex-start"
+          },
+          "children" : [ {
+            "id" : "23133df7-e672-4772-b714-86dc9ec24383",
+            "name" : "headerSection",
+            "title" : "테마 머리글",
+            "type" : "region"
+          } ],
+          "definition" : "community_layout:section",
+          "id" : "2c777fec-de13-4a3e-81d5-69cb1658f78b",
+          "type" : "component"
+        } ],
+        "id" : "6e27404c-7905-4148-8123-b15d1196a6f4",
+        "name" : "header",
+        "title" : "테마 머리글",
+        "type" : "region"
+      }, {
+        "children" : [ {
+          "attributes" : {
+            "backgroundImageConfig" : "",
+            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "componentSpacerSize" : "",
+            "layoutDirectionDesktop" : "row",
+            "layoutDirectionMobile" : "column",
+            "layoutDirectionTablet" : "column",
+            "maxContentWidth" : "",
+            "sectionColumnGutterWidth" : "",
+            "sectionConfig" : "{\"UUID\":\"8d1ee377-751a-4b70-aedc-b725f0ee63a6\",\"columns\":[{\"UUID\":\"bbe96827-9c82-42c0-bc20-199d192ca743\",\"columnName\":\"Column 1\",\"columnKey\":\"footerSection\",\"columnWidth\":\"12\",\"seedComponents\":null}]}",
+            "sectionMinHeight" : "",
+            "sectionVerticalAlign" : "flex-start"
+          },
+          "children" : [ {
+            "id" : "bbe96827-9c82-42c0-bc20-199d192ca743",
+            "name" : "footerSection",
+            "title" : "테마 바닥글",
+            "type" : "region"
+          } ],
+          "definition" : "community_layout:section",
+          "id" : "8d1ee377-751a-4b70-aedc-b725f0ee63a6",
+          "type" : "component"
+        } ],
+        "id" : "501af474-8c36-429a-9192-74dedadd4c55",
+        "name" : "footer",
+        "title" : "테마 바닥글",
+        "type" : "region"
+      } ],
+      "definition" : "community_byo:scopedHeaderAndFooter",
+      "id" : "23e7655c-e01a-4e91-ae7c-4baa0d7f70eb",
+      "type" : "component"
+    }
+  },
+  "urlName" : "scoped-header-and-footer"
+}

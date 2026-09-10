@@ -3,9 +3,8 @@
  * 인증은 Salesforce 로그인 세션/Org Sharing 규칙이 아니라 URL의 AccessToken__c 값 하나로 이루어진다.
  * 그래서 의도적으로 WITH USER_MODE/SECURITY_ENFORCED를 쓰지 않는다 — Guest User는 대부분 오브젝트에
  * Sharing 규칙상 접근 권한이 없어(OWD Private) USER_MODE를 걸면 토큰이 맞아도 결과가 0건으로 나온다.
- * 대신 모든 쿼리가 토큰으로 조회한 Lead.Id를 WHERE 절에 반드시 포함시켜(예: Lead__c = :l.Id)
- * "이 토큰 소유자의 데이터만" 접근 가능하도록 Apex 코드 자체가 접근 제어를 담당한다 — 32자 랜덤
- * 토큰(AccessTokenService)이 사실상의 비밀번호 역할을 한다.
+ * 대신 모든 쿼리가 유효기간 안의 토큰으로 조회한 Lead.Id를 WHERE 절에 반드시 포함시켜
+ * "이 토큰 소유자의 데이터만" 접근 가능하도록 Apex 코드 자체가 접근 제어를 담당한다.
  * Guest Profile에는 이 Apex 클래스에 대한 classAccesses(enabled=true)만 부여하면 되고,
  * 오브젝트/필드 CRUD는 시스템 모드로 실행되므로 별도 FLS 부여가 필요 없다.
  */
@@ -23,6 +22,7 @@ public without sharing class VenuePublicController {
         @AuraEnabled public String reasonText;
         @AuraEnabled public Boolean isSelected;
         @AuraEnabled public String venueTypeName;
+        @AuraEnabled public Boolean isDemoData;
     }
 
     @AuraEnabled(cacheable=true)
@@ -33,7 +33,7 @@ public without sharing class VenuePublicController {
         for (Recommendation__c rec : [
             SELECT Id, Rank__c, MatchScore__c, ReasonText__c, VenueNameSnapshot__c, Venue__c,
                    Venue__r.District__c, Venue__r.Coordinates__Latitude__s, Venue__r.Coordinates__Longitude__s,
-                   Venue__r.VenueType__r.Name
+                   Venue__r.Name, Venue__r.Source_Notes__c, Venue__r.VenueType__r.Name
             FROM Recommendation__c
             WHERE Lead__c = :l.Id AND RecommendationType__c = '장소'
             ORDER BY Rank__c ASC NULLS LAST
@@ -50,6 +50,11 @@ public without sharing class VenuePublicController {
             w.reasonText = rec.ReasonText__c;
             w.isSelected = (l.SelectedVenueFromWeb__c != null && l.SelectedVenueFromWeb__c == rec.Venue__c);
             w.venueTypeName = rec.Venue__r != null ? rec.Venue__r.VenueType__r?.Name : null;
+            String rawVenueName = rec.Venue__r != null ? rec.Venue__r.Name : '';
+            String sourceNotes = rec.Venue__r != null ? rec.Venue__r.Source_Notes__c : '';
+            w.isDemoData = rawVenueName.startsWith('[데모]')
+                || rawVenueName.startsWith('[가상]')
+                || (!String.isBlank(sourceNotes) && sourceNotes.contains('가상'));
             results.add(w);
         }
         return results;
@@ -146,6 +151,8 @@ public without sharing class VenuePublicController {
             SELECT Id, OwnerId, SelectedVenueFromWeb__c, Status, Email, FirstName, SelectedPackage__c
             FROM Lead
             WHERE AccessToken__c = :token
+              AND AccessTokenExpiresAt__c > :System.now()
+              AND IsConverted = false
             LIMIT 1
         ];
         if (leads.isEmpty()) {
